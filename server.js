@@ -5,7 +5,7 @@ require(__dirname + "/lib/setup").ext( __dirname + "/lib").ext( __dirname + "/li
 var http = require('http'), 
 		url = require('url'),
 		fs = require('fs'),
-		io = require('../'),
+		io = require('Socket.IO-node'),
 		sys = require('sys'),
                 connect = require('connect'),
                 express = require('express'),

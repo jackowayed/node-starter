@@ -70,7 +70,15 @@ io.on('connection', function(client){
 /////// ADD ALL YOUR ROUTES HERE  /////////
 
 
-
+server.get('/', function(req,res){
+  res.render('index.ejs', {
+    locals : { 
+              header: '#Header#'
+             ,footer: '#Footer#'
+             ,title : 'Page Title'
+            }
+  });
+});
 
 
 server.get('/500', function(req, res){

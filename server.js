@@ -9,45 +9,38 @@ var http = require('http'),
 		sys = require('sys'),
                 connect = require('connect'),
                 express = require('express'),
-                port = 80
+                port = 8080
 
 		
-send404 = function(res){
-	res.writeHead(404);
-	res.write('404');
-	res.end();
-},
-		
-server = http.createServer(function(req, res){
-	// your normal server code
-	var path = url.parse(req.url).pathname;
-	switch (path){
-		case '/':
-			res.writeHead(200, {'Content-Type': 'text/html'});
-			res.write('<h1>Welcome. Try the <a href="/chat.html">chat</a> example.</h1>');
-			res.end();
-			break;
-			
-		default:
-			if (/\.(js|html|swf)$/.test(path)){
-				try {
-					var swf = path.substr(-4) === '.swf';
-					res.writeHead(200, {'Content-Type': swf ? 'application/x-shockwave-flash' : ('text/' + (path.substr(-3) === '.js' ? 'javascript' : 'html'))});
-					res.write(fs.readFileSync(__dirname + path, swf ? 'binary' : 'utf8'), swf ? 'binary' : 'utf8');
-					res.end();
-				} catch(e){ 
-					send404(res); 
-				}
-				break;
-			}
-		
-			send404(res);
-			break;
-	}
+//Setup Express
+var server = express.createServer();
+server.configure(function(){
+    server.set('views', __dirname + '/views');
+    server.use(connect.bodyDecoder());
+    server.use(connect.staticProvider(__dirname + '/static'));
+    server.use(server.router);
 });
 
-server.listen(8080);
-		
+//setup the errors
+server.error(function(err, req, res, next){
+    if (err instanceof NotFound) {
+        res.render('404.ejs', { locals: { 
+                  header: '#Header#'
+                 ,footer: '#Footer#'
+                 ,title : '404 - Not Found'
+                } });
+    } else {
+        res.render('500.ejs', { locals: { 
+                  header: '#Header#'
+                 ,footer: '#Footer#'
+                 ,title : 'The Server Encountered an Error'
+                 ,error: err 
+                } });
+    }
+});
+server.listen( port);
+
+
 // socket.io, I choose you
 // simplest chat application evar
 var buffer = [], 
@@ -69,3 +62,31 @@ io.on('connection', function(client){
 		client.broadcast(json({ announcement: client.sessionId + ' disconnected' }));
 	});
 });
+
+///////////////////////////////////////////
+//              Routes                   //
+///////////////////////////////////////////
+
+/////// ADD ALL YOUR ROUTES HERE  /////////
+
+
+
+
+
+server.get('/500', function(req, res){
+    throw new Error('This is a 500 Error');
+});
+
+//The 404 Route (ALWAYS Keep this as the last route)
+server.get('/*', function(req, res){
+    throw new NotFound;
+});
+
+function NotFound(msg){
+    this.name = 'NotFound';
+    Error.call(this, msg);
+    Error.captureStackTrace(this, arguments.callee);
+}
+
+
+console.log('Listening on http://0.0.0.0:' + port );

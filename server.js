@@ -1,8 +1,16 @@
+//setup Dependencies
+require(__dirname + "/lib/setup").ext( __dirname + "/lib").ext( __dirname + "/lib/express/support");
+
+
 var http = require('http'), 
 		url = require('url'),
 		fs = require('fs'),
 		io = require('../'),
 		sys = require('sys'),
+                connect = require('connect'),
+                express = require('express'),
+                port = 80
+
 		
 send404 = function(res){
 	res.writeHead(404);

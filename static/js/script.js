@@ -19,7 +19,7 @@ function esc(msg){
   return msg.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 };
 
-var socket = new io.Socket(null, {port: 8080});
+var socket = new io.Socket(null, {port: 80});
 socket.connect();
 socket.on('message', function(data){
   var obj = JSON.parse(data);

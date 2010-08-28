@@ -9,7 +9,7 @@ var http = require('http'),
 		sys = require('sys'),
                 connect = require('connect'),
                 express = require('express'),
-                port = 8080
+                port = 80
 
 		
 //Setup Express
